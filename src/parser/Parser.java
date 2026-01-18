@@ -4,6 +4,9 @@ import scanner.Scanner;
 import scanner.LexicalException;
 import token.TokenType;
 import token.Token;
+import ast.*;
+
+import java.util.ArrayList;
 
 //Il parser verifica se la sequenza di token soddisfa la grammatica del linguaggio
 public class Parser {
@@ -12,9 +15,9 @@ public class Parser {
 	public Parser(Scanner sc) {
 		this.sc = sc;
 	}
-	/*
-	 * public void parse() throws SyntacticException { return this.parsePrg(); }
-	 */
+	
+	 public NodeProgram parse() throws SyntacticException {return this.parsePrg(); }
+	 
 
 	private Token peekWithChaining() throws SyntacticException {
 		try {
@@ -24,13 +27,14 @@ public class Parser {
 			throw new SyntacticException("Errore lessicale durante l'ispezione del token", e);
 		}
 	}
-
-	private void parsePrg() throws SyntacticException {
+	//restituisce NodeProgram che è la radice dell' albero sintattico
+	private NodeProgram parsePrg() throws SyntacticException {
 		Token tk = peekWithChaining();
 		switch (tk.getType()) {
 		case TYFLOAT, TYINT, ID, PRINT, EOF -> {
-			parseDSs();
+			ArrayList<NodeDecSt>decSts = parseDSs();
 			match(TokenType.EOF);
+			return new NodeProgram(decSts);
 		}
 		default -> {
 			throw new SyntacticException("Token" + tk.getType() + "non valido come inizio alla riga: " + tk.getRiga());
@@ -38,7 +42,7 @@ public class Parser {
 		}
 	}
 
-	private void parseDSs() throws SyntacticException {
+	private ArrayList<NodeDecSt> parseDSs() throws SyntacticException {
 		Token tk = peekWithChaining();
 		switch (tk.getType()) {
 		case TYFLOAT, TYINT -> {
@@ -219,7 +223,7 @@ public class Parser {
 		}
 		}
 	}
-	// metodo parse
+	
 
 	/*
 	 * Questo metodo ha il compito di: • Controllare se il tipo del prossimo token
