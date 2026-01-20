@@ -44,6 +44,8 @@ public class Parser {
 
 	private ArrayList<NodeDecSt> parseDSs() throws SyntacticException {
 		Token tk = peekWithChaining();
+		ArrayList<NodeDecSt> decDtS = new ArrayList<>();
+		
 		switch (tk.getType()) {
 		case TYFLOAT, TYINT -> {
 			parseDcl();
@@ -62,14 +64,17 @@ public class Parser {
 		}
 
 	}
-
-	private void parseDcl() throws SyntacticException {
+	//il metodo parseDcl fa la costruzione e ritorna NodeDecl
+	private NodeDecl parseDcl() throws SyntacticException {
 		Token tk = peekWithChaining();
 		switch (tk.getType()) {
 		case TYFLOAT, TYINT -> {
-			parseTy();
-			match(TokenType.ID);
-			parseDclP();
+			LangType type=parseTy();
+			Token idToken=match(TokenType.ID);
+			NodeExpr expr=parseDclP();
+			NodeId idnodo= new NodeId(idToken.getValore());
+			NodeDecl node= new NodeDecl(type,idnodo,expr);
+			return node;
 		}
 		default -> {
 			throw new SyntacticException("Token" + tk.getType() + "non valido come inizio alla riga: " + tk.getRiga());
@@ -77,24 +82,34 @@ public class Parser {
 		}
 	}
 
-	private void parseTy() throws SyntacticException {
+	private LangType parseTy() throws SyntacticException {
 		Token tk = peekWithChaining();
 		switch (tk.getType()) {
-		case TYFLOAT -> match(TokenType.TYFLOAT);
-		case TYINT -> match(TokenType.TYINT);
+		case TYFLOAT -> {
+			match(TokenType.TYFLOAT);
+			return LangType.FLOAT;
+		}
+		case TYINT -> {
+			match(TokenType.TYINT);
+			return LangType.INT;
+		}
 		default ->
 			throw new SyntacticException("Token" + tk.getType() + "non valido come inizio alla riga: " + tk.getRiga());
 		}
 	}
 
-	private void parseDclP() throws SyntacticException {
+	private NodeExpr parseDclP() throws SyntacticException {
 		Token tk = peekWithChaining();
 		switch (tk.getType()) {
-		case SEMI -> match(TokenType.SEMI);
+		case SEMI -> {
+			match(TokenType.SEMI);
+			return null;
+		}
 		case ASSIGN -> {
 			match(TokenType.ASSIGN);
-			parseExp();
+			NodeExpr exp = parseExp();
 			match(TokenType.SEMI);
+			return exp;
 		}
 		default -> {
 			throw new SyntacticException(
@@ -104,7 +119,7 @@ public class Parser {
 
 	}
 
-	private void parseStm() throws SyntacticException {
+	private NodeStm parseStm() throws SyntacticException {
 		Token tk = peekWithChaining();
 		switch (tk.getType()) {
 		case ID -> {
@@ -112,11 +127,16 @@ public class Parser {
 			parseOp();
 			parseExp();
 			match(TokenType.SEMI);
+			return null;
 		}
 		case PRINT -> {
 			match(TokenType.PRINT);
-			match(TokenType.ID);
+			Token idtoken = match(TokenType.ID);//il parser legge l'id
 			match(TokenType.SEMI);
+			
+			NodeId idnodo = new NodeId(idtoken.getValore());//mette nella scatola "piccola" il valore
+			return new NodePrint(idnodo);
+			
 		}
 		default -> {
 			throw new SyntacticException(
@@ -124,12 +144,13 @@ public class Parser {
 		}
 		}
 	}
-	private void parseExp() throws SyntacticException{
+	private NodeExpr parseExp() throws SyntacticException{
 		Token tk= peekWithChaining();
 		switch(tk.getType()) {
 		case ID,FLOAT,INT->{
 			parseTr();
 			parseExpP();
+			return null;
 		}
 		default ->{
 			throw new SyntacticException(
@@ -158,33 +179,36 @@ public class Parser {
 		}
 		}
 	}
-	private void parseTr() throws SyntacticException{
+	private NodeExpr parseTr() throws SyntacticException{
 		Token tk= peekWithChaining();
 		switch(tk.getType()) {
 		case ID, FLOAT, INT ->{
 			parseVal();
 			parseTrP();
+			return null;
 		}
 		default->{
 			throw new SyntacticException("Token " + tk.getType() + " non valido come inizio alla riga: " + tk.getRiga());
 		}
 		}
 	}
-	private void parseTrP() throws SyntacticException{
+	private NodeExpr parseTrP() throws SyntacticException{
 		Token tk= peekWithChaining();
 		switch(tk.getType()) {
 		case TIMES->{
 			match(TokenType.TIMES);
 			parseVal();
 			parseTrP();
+			return null;
 		}
 		case DIVIDE->{
 			match(TokenType.DIVIDE);
 			parseVal();
 			parseTrP();
+			return null;
 		}
 		case MINUS,PLUS,SEMI ->{
-			return;
+			return null;
 		}
 		default->{
 			throw new SyntacticException("Token " + tk.getType() + " non valido come inizio alla riga: " + tk.getRiga());
@@ -192,22 +216,25 @@ public class Parser {
 		}
 		
 	}
-	private void parseVal() throws SyntacticException{
+	private NodeExpr parseVal() throws SyntacticException{
 		Token tk=peekWithChaining();
 		switch(tk.getType()) {
 		case INT -> {
 			match(TokenType.INT);
+			return null;
 		}
 		case FLOAT -> { 
 			match(TokenType.FLOAT);
+			return null;
 		}
 		case ID -> {
 			match(TokenType.ID);
+			return null;
 		}
 		default->{
 			throw new SyntacticException("Token " + tk.getType() + " non valido come inizio alla riga: " + tk.getRiga());
 		}
-		}	
+		}
 	}
 	private void parseOp() throws SyntacticException{
 		Token tk=peekWithChaining();
