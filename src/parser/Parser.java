@@ -48,21 +48,23 @@ public class Parser {
 		
 		switch (tk.getType()) {
 		case TYFLOAT, TYINT -> {
-			parseDcl();
-			parseDSs();
+			decDtS.add(parseDcl());
+			decDtS.addAll(parseDSs());
 		}
 		case ID, PRINT -> {
-			parseStm();
-			parseDSs();
+			NodeStm stm=parseStm();
+			if(stm != null)
+				decDtS.add(stm);
+			decDtS.addAll(parseDSs());
 		}
 		case EOF -> {
-			return;
+			return decDtS;
 		}
 		default -> {
 			throw new SyntacticException("Token" + tk.getType() + "non valido come inizio alla riga: " + tk.getRiga());
 		}
 		}
-
+		return decDtS;
 	}
 	//il metodo parseDcl fa la costruzione e ritorna NodeDecl
 	private NodeDecl parseDcl() throws SyntacticException {
@@ -158,7 +160,7 @@ public class Parser {
 		}
 		}
 	}
-	private void parseExpP() throws SyntacticException{
+	private NodeBinOp parseExpP() throws SyntacticException{
 		Token tk= peekWithChaining();
 		switch(tk.getType()) {
 		case PLUS ->{
@@ -172,12 +174,13 @@ public class Parser {
 			parseExpP();
 		}
 		case SEMI ->{
-			return;
+			//return;
 		}
 		default->{
 			throw new SyntacticException("Token " + tk.getType() + " non valido come inizio alla riga: " + tk.getRiga());
 		}
 		}
+		return null;
 	}
 	private NodeExpr parseTr() throws SyntacticException{
 		Token tk= peekWithChaining();
@@ -220,33 +223,42 @@ public class Parser {
 		Token tk=peekWithChaining();
 		switch(tk.getType()) {
 		case INT -> {
-			match(TokenType.INT);
-			return null;
+			Token t = match(TokenType.INT);
+			return new NodeCost(t.getValore(),LangType.INT);
 		}
 		case FLOAT -> { 
-			match(TokenType.FLOAT);
-			return null;
+			Token t = match(TokenType.FLOAT);
+			return new NodeCost(t.getValore(),LangType.FLOAT);
 		}
 		case ID -> {
 			match(TokenType.ID);
-			return null;
+			NodeId node = new NodeId(tk.getValore());
+			return new NodeDeref(node);
 		}
 		default->{
 			throw new SyntacticException("Token " + tk.getType() + " non valido come inizio alla riga: " + tk.getRiga());
 		}
 		}
 	}
-	private void parseOp() throws SyntacticException{
+	private LangOper parseOp() throws SyntacticException{
 		Token tk=peekWithChaining();
 		switch(tk.getType()) {
 		case ASSIGN ->{
 			match(TokenType.ASSIGN);
+			return LangOper.ASSIGN;
 		}
 		case OP_ASSIGN -> {
 			match(TokenType.OP_ASSIGN);
+			if(tk.getValore().equals("+=")) return LangOper.PLUS;
+			if(tk.getValore().equals("-=")) return LangOper.MINUS;
+			if(tk.getValore().equals("*=")) return LangOper.TIMES;
+			if(tk.getValore().equals("/=")) return LangOper.DIVIDE;
+			throw new SyntacticException("Operatore composto non riconosciuto: "+ tk.getValore());
+
+
 		}
 		default->{
-			throw new SyntacticException("Token " + tk.getType() + " non valido come inizio alla riga: " + tk.getRiga());
+			throw new SyntacticException("Atteso operatore di assegnamento alla riga: "+tk.getRiga());
 		}
 		}
 	}
