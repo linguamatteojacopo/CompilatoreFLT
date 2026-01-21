@@ -150,9 +150,8 @@ public class Parser {
 		Token tk= peekWithChaining();
 		switch(tk.getType()) {
 		case ID,FLOAT,INT->{
-			parseTr();
-			parseExpP();
-			return null;
+			NodeExpr left=parseTr();
+			return parseExpP(left);
 		}
 		default ->{
 			throw new SyntacticException(
@@ -160,58 +159,59 @@ public class Parser {
 		}
 		}
 	}
-	private NodeBinOp parseExpP() throws SyntacticException{
+	private NodeExpr parseExpP(NodeExpr left) throws SyntacticException{
 		Token tk= peekWithChaining();
 		switch(tk.getType()) {
 		case PLUS ->{
 			match(TokenType.PLUS);
-			parseTr();
-			parseExpP();
+			NodeExpr right=parseTr();
+			NodeBinOp nodeop=new NodeBinOp(LangOper.PLUS,left,right);
+			return parseExpP(nodeop);
 		}
 		case MINUS ->{
 			match(TokenType.MINUS);
-			parseTr();
-			parseExpP();
+			NodeExpr right = parseTr();
+			NodeBinOp nodeop=new NodeBinOp(LangOper.MINUS,left,right);
+			return parseExpP(nodeop);
 		}
-		case SEMI ->{
-			//return;
+		case SEMI ,EOF->{
+			return left;
 		}
 		default->{
 			throw new SyntacticException("Token " + tk.getType() + " non valido come inizio alla riga: " + tk.getRiga());
 		}
 		}
-		return null;
 	}
 	private NodeExpr parseTr() throws SyntacticException{
 		Token tk= peekWithChaining();
 		switch(tk.getType()) {
 		case ID, FLOAT, INT ->{
-			parseVal();
-			parseTrP();
-			return null;
+			NodeExpr left=parseVal();
+			return parseTrP(left);
 		}
 		default->{
 			throw new SyntacticException("Token " + tk.getType() + " non valido come inizio alla riga: " + tk.getRiga());
 		}
 		}
 	}
-	private NodeExpr parseTrP() throws SyntacticException{
+	private NodeExpr parseTrP(NodeExpr left) throws SyntacticException{
 		Token tk= peekWithChaining();
 		switch(tk.getType()) {
 		case TIMES->{
 			match(TokenType.TIMES);
-			parseVal();
-			parseTrP();
-			return null;
+			NodeExpr right=parseVal();
+			NodeBinOp nodeop= new NodeBinOp(LangOper.TIMES,left,right);
+			return parseTrP(nodeop);
 		}
 		case DIVIDE->{
 			match(TokenType.DIVIDE);
-			parseVal();
-			parseTrP();
-			return null;
+			NodeExpr right=parseVal();
+			NodeBinOp nodeop= new NodeBinOp(LangOper.DIVIDE,left,right);
+			return parseTrP(nodeop);
+			
 		}
 		case MINUS,PLUS,SEMI ->{
-			return null;
+			return left;
 		}
 		default->{
 			throw new SyntacticException("Token " + tk.getType() + " non valido come inizio alla riga: " + tk.getRiga());
