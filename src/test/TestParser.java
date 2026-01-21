@@ -6,7 +6,7 @@ import parser.Parser;
 import parser.SyntacticException;
 import scanner.Scanner;
 import java.io.FileNotFoundException;
-
+import ast.*;
 class TestParser {
 
     // Percorso base per i file di test come indicato nel progetto [4, 5]
@@ -72,12 +72,24 @@ class TestParser {
      * il toString() dell'albero con il valore atteso [18, 19].
      */
     @Test
-    void testASTToString() throws FileNotFoundException, SyntacticException {
-        // Esempio basato su testSoloDichPrint.txt [9]
-        // Scanner s = new Scanner(basePath + "testSoloDichPrint.txt");
-        // Parser p = new Parser(s);
-        // NodeProgram root = p.parse(); // Modificare parse() affinché ritorni NodeProgram
-        // String expected = "NodeProgram(NodeDecl(int, NodeId [name=temp], null), NodePrint [Id=NodeId [name=abc]])";
-        // assertEquals(expected, root.toString());
+    void testProduzioneASTCorretto() throws Exception{
+        Scanner scanner = new Scanner (basePath +"testAST.txt");
+        Parser parser = new Parser (scanner);
+        
+        //Avvio del parser per la costruzione dell' albeero
+        NodeProgram root = parser.parse();
+        String astOutput= root.toString();
+        
+        //Debug albero
+        System.out.println("DEBUG AST: " + astOutput);
+        //Verifica Dichiarazione semplice(int temp;)
+        assertTrue(astOutput.contains("NodeDecl [type=INT, id=NodeId [name=temp], init=null]"), 
+                "Manca la dichiarazione corretta di temp");
+        //Per l'assegnamento:
+        assertTrue(astOutput.contains("NodeAssign [id=NodeId [name=temp]"), 
+                "L'assegnamento non è stato costruito correttamente");
+        assertTrue(astOutput.contains ("expr=NodeBinOp [op=PLUS, left=NodeDeref [Id=NodeId [name=temp]], right=NodeCost [value=7, type=INT]]],NodeAssign [id=NodeId [name=temp], expr=NodeBinOp [op=MINUS, left=NodeBinOp [op=PLUS, left=NodeCost [value=3, type=INT], right=NodeBinOp [op=TIMES, left=NodeCost [value=7, type=INT], right=NodeCost [value=5, type=INT]]], right=NodeCost [value=6, type=INT]]]"),
+        		("La struttura a cascata non e' stata costruita correttamente"));
+        
     }
 }

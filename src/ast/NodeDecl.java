@@ -19,5 +19,9 @@ public class NodeDecl extends NodeDecSt {
 	public NodeExpr getInit() {
 		return init;
 	}
+	@Override
+	public String toString() {
+		return "NodeDecl [type=" + type + ", id=" + id + ", init=" + init + "]";
+	}
 	
 }
