@@ -125,11 +125,21 @@ public class Parser {
 		Token tk = peekWithChaining();
 		switch (tk.getType()) {
 		case ID -> {
-			match(TokenType.ID);
-			parseOp();
-			parseExp();
+			Token idtk = match(TokenType.ID);
+			NodeId idNodo= new NodeId(idtk.getValore());
+			LangOper op =parseOp();
+			NodeExpr exp=parseExp();
 			match(TokenType.SEMI);
-			return null;
+			
+			if(op == LangOper.ASSIGN) {
+				return new NodeAssign(idNodo,exp);
+			}
+			else {
+				NodeDeref deref = new NodeDeref(idNodo);
+				NodeBinOp binop= new NodeBinOp(op,deref,exp);
+				return new NodeAssign(idNodo,binop);
+			}
+			
 		}
 		case PRINT -> {
 			match(TokenType.PRINT);
@@ -231,8 +241,8 @@ public class Parser {
 			return new NodeCost(t.getValore(),LangType.FLOAT);
 		}
 		case ID -> {
-			match(TokenType.ID);
-			NodeId node = new NodeId(tk.getValore());
+			Token t =match(TokenType.ID);
+			NodeId node = new NodeId(t.getValore());
 			return new NodeDeref(node);
 		}
 		default->{
