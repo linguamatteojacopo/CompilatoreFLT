@@ -1,6 +1,7 @@
 package ast;
 import  java.util.ArrayList;
-public class NodeProgram extends NodeAST {
+import visitor.IVisitor;
+public class NodeProgram extends NodeAST{
 	private ArrayList<NodeDecSt> decSts;
 	public NodeProgram(ArrayList<NodeDecSt> decSts) {
 		this.decSts=decSts;
@@ -8,6 +9,10 @@ public class NodeProgram extends NodeAST {
 	public ArrayList<NodeDecSt> getDecSts() {
 		return decSts;
 	}
+	@Override
+    public void accept(IVisitor visitor) {
+       visitor.visit(this); // Richiama il metodo specifico nel visitor
+    }
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("NodeProgram(");

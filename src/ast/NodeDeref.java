@@ -1,5 +1,7 @@
 package ast;
 
+import visitor.IVisitor;
+
 public class NodeDeref extends NodeExpr{
 	NodeId Id;
 
@@ -11,7 +13,10 @@ public class NodeDeref extends NodeExpr{
 	public NodeId getId() {
 		return Id;
 	}
-
+	@Override
+	public void accept(IVisitor visitor) {
+		visitor.visit(this);
+	}
 	@Override
 	public String toString() {
 		return "NodeDeref [Id=" + Id + "]";

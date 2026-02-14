@@ -1,6 +1,8 @@
 package ast;
 
-public class NodeId {
+import visitor.IVisitor;
+
+public class NodeId extends NodeAST{
 	
 
 	public String name;
@@ -9,7 +11,10 @@ public class NodeId {
 		super();
 		this.name = name;
 	}
-
+	@Override
+	public void accept(IVisitor visitor) {
+		visitor.visit(this);
+	}
 	@Override
 	public String toString() {
 		return "NodeId [name=" + name + "]";
