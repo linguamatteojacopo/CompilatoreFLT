@@ -13,6 +13,9 @@ public class NodeBinOp extends NodeExpr{
 	public LangOper getOp() {
 		return op;
 	}
+	public void setOp(LangOper op) {
+		this.op=op;
+	}
 	public NodeExpr getLeft() {
 		return left;
 	}

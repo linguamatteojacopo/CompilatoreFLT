@@ -31,10 +31,20 @@ public class SymbolTable {
 	public static Attributes lookup(String id) {
 		return table.get(id);
 	}
+	//ritorna il numero di variabili attualmente memorizzate nella symbol table
 	public static String toStr() {
-	// ......
+		StringBuilder sb = new StringBuilder();
+		sb.append("--- SYMBOL TABLE ---\n");
+		
+		for(String id: table.keySet()) {
+			Attributes attr = table.get(id);
+			sb.append("ID: ").append(id).append(" | Tipo: ").append(attr.getTipo()).append("\n");
+		}
+		sb.append("--------------------");
+	    return sb.toString();
+		
 	}
 	public static int size() {
-	// ......
+		return table.size();
 	}
 }
