@@ -3,6 +3,7 @@ import ast.*;
 import symbolTable.SymbolTable;
 import symbolTable.SymbolTable.Attributes;
 public class TypeCheckingVisitor implements IVisitor {
+	private char prossimoRegistro = 'a'; //Contatore per i registri
 	private TypeDescriptor resType;//memorizzare e propagare il risultato dell' analisi
 
 	public TypeCheckingVisitor(TypeDescriptor resType) {
@@ -41,7 +42,7 @@ public class TypeCheckingVisitor implements IVisitor {
 		}
 	}
 	public void visit(NodeDecl node) {
-		Attributes attr = new Attributes(node.getType());
+		Attributes attr = new Attributes(node.getType(),prossimoRegistro++);
 		if(!SymbolTable.enter(node.getId().getName(), attr)) {
 			resType = new TypeDescriptor(TipoTD.ERROR,"Errore: variabile gia' creata");
 			return;

@@ -5,15 +5,19 @@ public class SymbolTable {
 	//Classe interna per memorizzare le proprietà della variabile
 	public static class Attributes{
 		private LangType tipo;
+		private char registro;
 		
-		public Attributes(LangType tipo) {
+		public Attributes(LangType tipo,char registro) {
 			this.tipo=tipo;
+			this.registro = registro;		
 		}
 		public LangType getTipo() {
 			return tipo;
 		}
+		public char getRegistro() {
+			return registro;
+		}
 		
-		//tabella statica (ne avremo solo una per il compilatore)
 	}
 	//tabella statica (ne avremo solo una per il compilatore)
 	private static HashMap<String,Attributes> table = new HashMap();
