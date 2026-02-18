@@ -16,7 +16,7 @@ class TestCodeGenerator {
 
     @BeforeEach
     void setUp() {
-        SymbolTable.init(); // Reset della tabella prima di ogni test [1]
+        SymbolTable.init(); // Reset della tabella prima di ogni test 
     }
 
     private CodeGeneration runPipeline(String fileRelativePath) throws Exception {
@@ -24,12 +24,12 @@ class TestCodeGenerator {
         Parser p = new Parser(sc);
         NodeProgram nP = p.parse();
 
-        // Fase 1: Type Checking (necessaria per decorare l'AST e mappare i registri) [2, 3]
+        // Fase 1: Type Checking (necessaria per decorare l'AST e mappare i registri) 
         TypeDescriptor td = new TypeDescriptor(TipoTD.OK);
         TypeCheckingVisitor tcVisit = new TypeCheckingVisitor(td);
         nP.accept(tcVisit);
 
-        // Fase 2: Generazione Codice [4]
+        // Fase 2: Generazione Codice 
         CodeGeneration cgVisit = new CodeGeneration();
         nP.accept(cgVisit);
         return cgVisit;
@@ -40,7 +40,7 @@ class TestCodeGenerator {
         CodeGeneration cg = runPipeline("src/test/data/CodeGenerator/1_assign.txt");
         String code = cg.getCodice();
         
-        // Verifica che la stringa generata produca '0' (divisione intera 1/6)
+        // Verifica che la stringa generata produca '0' 
         assertTrue(code.contains("1 6 /"), "Manca la divisione intera");
         assertTrue(cg.getLog().isEmpty(), "Il log dovrebbe essere vuoto");
         System.out.println("Test 1_assign.txt: " + code);
@@ -51,7 +51,7 @@ class TestCodeGenerator {
         CodeGeneration cg = runPipeline("src/test/data/CodeGenerator/2_divsioni.txt");
         String code = cg.getCodice();
         
-        // Verifica la gestione della precisione float 5 k / 0 k [5, 6]
+        // Verifica la gestione della precisione float 5 k / 0 k 
         assertTrue(code.contains("5 k / 0 k"), "Manca la gestione della precisione float");
         assertTrue(cg.getLog().isEmpty());
         System.out.println("Test 2_divsioni.txt: " + code);

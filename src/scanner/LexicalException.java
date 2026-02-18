@@ -6,6 +6,5 @@ public class LexicalException extends Exception {
 		super(message);
 	}
 
-	// Costruttori
 
 }

@@ -9,20 +9,20 @@ import java.io.FileNotFoundException;
 import ast.*;
 class TestParser {
 
-    // Percorso base per i file di test come indicato nel progetto [4, 5]
+    
     private final String basePath = "src/test/data/";
 
     /**
      * Test per programmi sintatticamente corretti.
-     * Il parser non deve lanciare alcuna eccezione [1, 3].
+     * Il parser non deve lanciare alcuna eccezione 
      */
     @Test
     void testParserCorretto() {
         assertDoesNotThrow(() -> {
-            // Test con file forniti: testParserCorretto1.txt e testParserCorretto2.txt [6, 7]
+            // Test con file forniti: testParserCorretto1.txt e testParserCorretto2.txt 
             new Parser(new Scanner(basePath + "testParserCorretto1.txt")).parse();
             new Parser(new Scanner(basePath + "testParserCorretto2.txt")).parse();
-            // Test solo dichiarazioni e print [8, 9]
+            // Test solo dichiarazioni e print 
             new Parser(new Scanner(basePath + "testSoloDich.txt")).parse();
             new Parser(new Scanner(basePath + "testSoloDichPrint.txt")).parse();
         }, "Il parser dovrebbe accettare questi programmi senza errori.");
@@ -30,46 +30,46 @@ class TestParser {
 
     /**
      * Test per programmi con errori sintattici.
-     * Il parser deve sollevare una SyntacticException [1, 2].
+     * Il parser deve sollevare una SyntacticException 
      */
     @Test
     void testParserErrori() {
-        // testParserEcc_0: Identificatore senza assegnamento o dichiarazione [10]
+        // testParserEcc_0: Identificatore senza assegnamento o dichiarazione 
         assertThrows(SyntacticException.class, () -> 
             new Parser(new Scanner(basePath + "testParserEcc_0.txt")).parse());
 
-        // testParserEcc_1: Doppio operatore consecutivo [11]
+        // testParserEcc_1: Doppio operatore consecutivo 
         assertThrows(SyntacticException.class, () -> 
             new Parser(new Scanner(basePath + "testParserEcc_1.txt")).parse());
 
-        // testParserEcc_2: Identificatore che inizia con un numero [12]
+        // testParserEcc_2: Identificatore che inizia con un numero 
         assertThrows(SyntacticException.class, () -> 
             new Parser(new Scanner(basePath + "testParserEcc_2.txt")).parse());
 
-        // testParserEcc_3: Espressione senza assegnamento [13]
+        // testParserEcc_3: Espressione senza assegnamento 
         assertThrows(SyntacticException.class, () -> 
             new Parser(new Scanner(basePath + "testParserEcc_3.txt")).parse());
 
-        // testParserEcc_4: Print di un numero (solo print id è ammesso) [14]
+        // testParserEcc_4: Print di un numero (solo print id è ammesso) 
         assertThrows(SyntacticException.class, () -> 
             new Parser(new Scanner(basePath + "testParserEcc_4.txt")).parse());
 
-        // testParserEcc_5: Errore nella dichiarazione (float seguito da numero) [15]
+        // testParserEcc_5: Errore nella dichiarazione (float seguito da numero) 
         assertThrows(SyntacticException.class, () -> 
             new Parser(new Scanner(basePath + "testParserEcc_5.txt")).parse());
 
-        // testParserEcc_6: Uso di parola chiave come identificatore [16]
+        // testParserEcc_6: Uso di parola chiave come identificatore 
         assertThrows(SyntacticException.class, () -> 
             new Parser(new Scanner(basePath + "testParserEcc_6.txt")).parse());
 
-        // testParserEcc_7: Assegnamento diretto senza identificatore valido [17]
+        // testParserEcc_7: Assegnamento diretto senza identificatore valido 
         assertThrows(SyntacticException.class, () -> 
             new Parser(new Scanner(basePath + "testParserEcc_7.txt")).parse());
     }
 
     /**
      * Una volta completata la costruzione dell'AST, il test dovrebbe confrontare 
-     * il toString() dell'albero con il valore atteso [18, 19].
+     * il toString() dell'albero con il valore atteso.
      */
     @Test
     void testProduzioneASTCorretto() throws Exception{
